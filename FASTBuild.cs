@@ -60,6 +60,14 @@ namespace UnrealBuildTool
 				fbuild = "fbuild.exe";
 			}
 
+			var integratedPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\Binaries\ThirdParty\FASTBuild", fbuild));
+			if (File.Exists(integratedPath))
+			{
+				FBuildExePathOverride = integratedPath;
+				Console.WriteLine($"Using integrated FBuild at {integratedPath}");
+				return true;
+			}
+
 			// Search the path for it
 			string PathVariable = Environment.GetEnvironmentVariable("PATH");
 			foreach (string SearchPath in PathVariable.Split(Path.PathSeparator))
