@@ -466,19 +466,20 @@ namespace UnrealBuildTool
 			if (VCEnv != null)
 			{
 				AddText(string.Format(".VSBasePath = '{0}\\'\n", VCEnv.VSInstallDir));
+				AddText(string.Format(".VCBasePath = '{0}\\'\n", VCEnv.VCInstallDir));
 				AddText(string.Format(".WindowsSDKBasePath = '{0}'\n", VCEnv.WindowsSDKDir));
 
 				AddText("Compiler('UE4ResourceCompiler') \n{\n");
 				AddText("\t.Executable = '$WindowsSDKBasePath$/bin/x64/rc.exe'\n}\n\n");
 
 				AddText("Compiler('UE4Compiler') \n{\n");
-				AddText("\t.Root = '$VSBasePath$/VC/bin/amd64'\n");
+				AddText("\t.Root = '$VCBasePath$/bin/amd64'\n");
 				AddText("\t.Executable = '$Root$/cl.exe'\n");
 				AddText("\t.ExtraFiles =\n\t{\n");
 				AddText("\t\t'$Root$/c1.dll'\n");
 				AddText("\t\t'$Root$/c1xx.dll'\n");
 				AddText("\t\t'$Root$/c2.dll'\n");
-				string CompilerRoot = VCEnv.VSInstallDir + "/VC/bin/amd64/";
+				string CompilerRoot = VCEnv.VCInstallDir + "/bin/amd64/";
 				if (File.Exists(CompilerRoot + "1033/clui.dll")) //Check English first...
 				{
 					AddText("\t\t'$Root$/1033/clui.dll'\n");
@@ -503,15 +504,15 @@ namespace UnrealBuildTool
 
 				/* Maybe not needed to compile anymore?
 				if(!WindowsPlatform.bUseWindowsSDK10)
-					AddText(string.Format("\t\t'$VSBasePath$/VC/redist/x64/Microsoft.VC{0}.CRT/msvcr{1}.dll'\n", platformVersionNumber, platformVersionNumber));
+					AddText(string.Format("\t\t'$VCBasePath$/redist/x64/Microsoft.VC{0}.CRT/msvcr{1}.dll'\n", platformVersionNumber, platformVersionNumber));
 				else
 					AddText("\t\t'$WindowsSDKBasePath$/Redist/ucrt/DLLs/x64/ucrtbase.dll'\n\n");
 				*/
 				AddText(string.Format("\t\t'$Root$/mspft{0}.dll'\n", platformVersionNumber));
 				AddText(string.Format("\t\t'$Root$/msobj{0}.dll'\n", platformVersionNumber));
 				AddText(string.Format("\t\t'$Root$/mspdb{0}.dll'\n", platformVersionNumber));
-				AddText(string.Format("\t\t'$VSBasePath$/VC/redist/x64/Microsoft.VC{0}.CRT/msvcp{1}.dll'\n", platformVersionNumber, platformVersionNumber));
-				AddText(string.Format("\t\t'$VSBasePath$/VC/redist/x64/Microsoft.VC{0}.CRT/vccorlib{1}.dll'\n", platformVersionNumber, platformVersionNumber));
+				AddText(string.Format("\t\t'$VCBasePath$/redist/x64/Microsoft.VC{0}.CRT/msvcp{1}.dll'\n", platformVersionNumber, platformVersionNumber));
+				AddText(string.Format("\t\t'$VCBasePath$/redist/x64/Microsoft.VC{0}.CRT/vccorlib{1}.dll'\n", platformVersionNumber, platformVersionNumber));
 				AddText("\t}\n"); //End extra files
 
 				AddText("}\n\n"); //End compiler
@@ -568,7 +569,7 @@ namespace UnrealBuildTool
 			//Start Environment
 			AddText("\t.Environment = \n\t{\n");
 			if (VCEnv != null)
-				AddText("\t\t\"PATH=$VSBasePath$\\Common7\\IDE\\;$VSBasePath$\\VC\\bin\\\",\n");
+				AddText("\t\t\"PATH=$VSBasePath$\\Common7\\IDE\\;$VCBasePath$\\bin\\\",\n");
 			if (envVars.ContainsKey("TMP"))
 				AddText(string.Format("\t\t\"TMP={0}\",\n", envVars["TMP"]));
 			if (envVars.ContainsKey("SystemRoot"))
