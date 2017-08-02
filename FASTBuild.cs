@@ -26,8 +26,7 @@ namespace UnrealBuildTool
 
 		// Location of the shared cache, it could be a local or network path (i.e: @"\\DESKTOP-BEAST\FASTBuildCache").
 		// Only relevant if bEnableCaching is true;
-		private string CachePath = @"\\smellyriver\FASTBuild\Cache"; //@"\\YourCacheFolderPath";   
-		//private string CachePath = @"E:\MAGit\Cache";
+		private string CachePath = @"\\YourCacheFolderPath";   
 
 		public enum eCacheMode
 		{
