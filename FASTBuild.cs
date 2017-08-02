@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace UnrealBuildTool
 {
-	public class FASTBuild : ActionExecutor
+	class FASTBuild : ActionExecutor
 	{
 		/*---- Configurable User settings ----*/
 
@@ -22,11 +22,11 @@ namespace UnrealBuildTool
 		private bool bEnableDistribution = true;
 
 		// Controls whether to use caching at all. CachePath and CacheMode are only relevant if this is enabled.
-		private bool bEnableCaching = false;
+		private bool bEnableCaching = true;
 
 		// Location of the shared cache, it could be a local or network path (i.e: @"\\DESKTOP-BEAST\FASTBuildCache").
 		// Only relevant if bEnableCaching is true;
-		private string CachePath = ""; //@"\\YourCacheFolderPath";   
+		private string CachePath = @"\\YourCacheFolderPath";   
 
 		public enum eCacheMode
 		{
@@ -138,13 +138,13 @@ namespace UnrealBuildTool
 		}
 
 		//Run FASTBuild on the list of actions. Relies on fbuild.exe being in the path.
-		public override bool ExecuteActions(List<Action> Actions)
+		public override bool ExecuteActions(List<Action> Actions, bool bLogDetailedActionStats)
 		{
 			bool FASTBuildResult = true;
 			if (Actions.Count > 0)
 			{
 				DetectBuildType(Actions);
-				string FASTBuildFilePath = Path.Combine(BuildConfiguration.BaseIntermediatePath, "fbuild.bff");
+				string FASTBuildFilePath = FileReference.Combine(UnrealBuildTool.EngineDirectory, "Intermediate", "Build", "fbuild.bff").FullName;
 				CreateBffFile(Actions, FASTBuildFilePath);
 				return ExecuteBffFile(FASTBuildFilePath);
 			}
@@ -452,7 +452,7 @@ namespace UnrealBuildTool
 			{
 				// This may fail if the caller emptied PATH; we try to ignore the problem since
 				// it probably means we are building for another platform.
-				VCEnv = VCEnvironment.SetEnvironment(CPPTargetPlatform.Win64, false);
+				VCEnv = VCEnvironment.SetEnvironment(CppPlatform.Win64, WindowsCompiler.Default);
 			}
 			catch (Exception)
 			{
@@ -505,10 +505,6 @@ namespace UnrealBuildTool
 				AddText("\t\t'$Root$/mspdbcore.dll'\n");
 
 				string platformVersionNumber = "140";
-				if (WindowsPlatform.Compiler == WindowsCompiler.VisualStudio2013)
-				{
-					platformVersionNumber = "120";
-				}
 
 				/* Maybe not needed to compile anymore?
 				if(!WindowsPlatform.bUseWindowsSDK10)
@@ -937,7 +933,7 @@ namespace UnrealBuildTool
 			ProcessStartInfo FBStartInfo = new ProcessStartInfo(string.IsNullOrEmpty(FBuildExePathOverride) ? "fbuild" : FBuildExePathOverride, FBCommandLine);
 
 			FBStartInfo.UseShellExecute = false;
-			FBStartInfo.WorkingDirectory = Path.Combine(BuildConfiguration.RelativeEnginePath, "Source");
+			FBStartInfo.WorkingDirectory = FileReference.Combine(UnrealBuildTool.EngineDirectory, "Source").FullName;
 
 			try
 			{
