@@ -133,6 +133,10 @@ Location: *Engine\Saved\UnrealBuildTool\BuildConfiguration.xml*
 </Configuration>
 
 ```
+
+### PUSH_MACRO and POP_MACRO issue
+If you encounters a compilation issue at a `PUSH_MACRO` (and `POP_MACRO`) macro complaining a syntax error of `')'`, try to replace them with `#pragma push_macro(...)` and `#pragma pop_macro(...)` as a workaround. This is a FASTBuild bug, you can find more details [here](https://github.com/fastbuild/fastbuild/issues/256).
+
 ### Issue with Windows 10 SDK
 If you are using Windows 10 SDK, there could be some issues with the XInput library. Modify `Core.Build.cs` to fix this:
 #### Core.Build.cs
