@@ -9,7 +9,7 @@ We assume you already have the full UE4 source code. First you'll need to grab t
 - Place the files anywhere you like. This is not recommended because you'll have to hard-code the path later.
 
 ### ActionExecutor
-Then you'll need an `ActionExecutor`, which acts as a bridge between Unreal Build Tool (UBT) and FASTBuild. There is already one written by [liamkf](https://github.com/liamkf/Unreal_FASTBuild), I also forked it and made my own version, which contains bug fixes and improvements. In this tutorial, I would recommend and use this variant. You can get it [here](https://github.com/hillin/Unreal_FASTBuild).
+Then you'll need an `ActionExecutor`, which acts as a bridge between Unreal Build Tool (UBT) and FASTBuild. There is already one written by [liamkf](https://github.com/liamkf/Unreal_FASTBuild), I also forked it and made my own version, which contains bug fixes and improvements, as well as 4.16 support. In this tutorial, we will use this variant. You can get it [here](https://github.com/hillin/Unreal_FASTBuild).
 
 The `ActionExeuctor` is simply a C# class. Download the file `FASTBuild.cs` and place it under the `Engine\Source\Programs\UnrealBuildTool\System` folder of your engine.
 
@@ -33,36 +33,7 @@ Location: *Engine\Source\Programs\UnrealBuildTool\Configuration\BuildConfigurati
 		[XmlConfig]
 		public static bool bAllowDistcc;
 ```
-```csharp
-		public static void LoadDefaults()
-		{
-			bAllowLTCG = false;
-			bAllowASLRInShipping = true;
-			bAllowRemotelyCompiledPCHs = false;
-			bAllowXGE = true;
-			bXGENoWatchdogThread = false;
-			bAllowSNDBS = true;
 
-+			bAllowFastbuild = true;
-
-			bUsePDBFiles = false; //Only required if you're using MSVC
-```
-```csharp
-		public static void ValidateConfiguration(CPPTargetConfiguration Configuration, CPPTargetPlatform Platform, bool bCreateDebugInfo, UEBuildPlatformContext PlatformContext)
-		{
-			UEBuildPlatform BuildPlatform = UEBuildPlatform.GetBuildPlatformForCPPTargetPlatform(Platform);
-
-+			if (!BuildPlatform.CanUseFastbuild())
-+			{
-+				bAllowFastbuild = false;
-+			}
-
-			// E&C support.
-			if (bSupportEditAndContinue)
-			{
-				bUseIncrementalLinking = BuildPlatform.ShouldUseIncrementalLinking(Platform, Configuration);
-			}
-```
 #### UEBuildPlatform.cs
 Location: *Engine\Source\Programs\UnrealBuildTool\Configuration\UEBuildPlatform.cs*
 ```csharp
